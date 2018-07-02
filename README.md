@@ -2,7 +2,9 @@
 
 [Link to Saliens Game](https://steamcommunity.com/saliengame/play)
 
-### What was improved?
+This fork includes all actual features from original which is nice in my opinion. 
+
+### What is difference and were improved?
 * Estimite time to next level is disabled by default
 * Changed nice GUI
 * Optimized search of best zone algorithm
