@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		Ensingm2 Salien Game Idler
+// @name		Ensingm2 SGI Latest
 // @namespace	https://github.com/ensingm2/saliengame_idler
 // @version		0.0.21
 // @author		ensingm2
@@ -18,11 +18,11 @@ var update_length = 1; // How long to wait between updates (In Seconds)
 var loop_rounds = true;
 var language = "english"; // Used when POSTing scores
 var access_token = "";
-// Used to get data back in boss battles; ; 
-// Timestamp for when the current game started; ; ; 
+// Used to get data back in boss battles; ;
+// Timestamp for when the current game started; ; ;
 // Last time we updated the grid (to avoid too frequent calls)
 // Check the state of the game script and unlock it if needed (setInterval)
-var account_id = current_game_id = current_game_start = current_timeout = current_planet_id = last_update_grid = check_game_state = undefined;  
+var account_id = undefined, current_game_id = undefined, current_game_start = undefined, current_timeout = undefined, current_planet_id = undefined, last_update_grid = undefined, check_game_state = undefined;
 var time_passed_ms = 0;
 var max_retry = 5; // Max number of retries to send requests
 var auto_first_join = true; // Automatically join the best zone at first
@@ -887,9 +887,15 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 		console.log("There's no planet better than the current one.");
 	}
 	// Hide the game again
-	if($J('#animationsCheckbox').prop('checked')) {
+	/*$J('#animationsCheckbox').change(function() {
+		});
+		$J('#animationsCheckbox').prop('checked', !animations_enabled);
+
+
+	if($J('#animationsCheckbox').prop('checked'))
+	{
 		INJECT_toggle_animations(!this.checked);
-	}
+	}*/
 }
 
 var INJECT_switch_planet = function(planet_id, callback) {
