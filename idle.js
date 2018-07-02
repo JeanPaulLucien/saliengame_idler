@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name		Ensingm2 Salien Game Idler
+// @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
-// @version		0.0.18
+// @version		0.0.20
 // @author		ensingm2
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
@@ -40,28 +40,81 @@ var boss_options = {
 	"report_interval": undefined,
 	"error_count": 0,
 	"last_heal": undefined,
-	"last_report": undefined // Used in the check of the game script state and unlock it if needed 
+	"last_report": undefined // Used in the check of the game script state and unlock it if needed
 }
 var current_game_is_boss = false; // State if we're entering / in a boss battle or not
+
+
+// Xtreme options start
+function funcOnlyGame() {
+  var hide = [];
+  hide[0] = document.getElementById("global_header");
+  hide[1] = document.getElementById("footer");
+  hide[2] = document.getElementsByClassName("salien_section");
+  hide[3] = document.getElementsByClassName("salien_backstory");
+
+  // If the checkbox is checked, display the output text
+  if (document.getElementById("xtremeCheck1").checked == true) {
+    hide.style.display = "none";
+  } else {
+    hide.style.display = "";
+  }
+}
+
+var xtremeScriptTitle = '<h2>Salien Game Idler</h2>';
+var xtremeAuthor = '<span>Xtreme settings by JPL: </span>';
+var xtremeCheck1 = '<input id="stayOnlyGame" type="checkbox" title="Stay only the game on the page">'; // onclick = "stayOnlyGame()"
+
+var xtremeDiv = document.createElement('div');
+    xtremeDiv.className = "sab_xtremeOptions";
+    xtremeDiv.innerHTML = xtremeScriptTitle + xtremeAuthor + xtremeCheck1;
+
+var xtremeStyle = document.createElement('style');
+    xtremeStyle.innerHTML = ".sab_xtremeOptions {margin: 0 auto;text-align: center;padding: 10px 0;}";
+    xtremeDiv.appendChild(xtremeStyle, xtremeDiv);
+
+
+
+document.body.insertBefore(xtremeDiv, document.body.firstChild);
+
+document.getElementById('stayOnlyGame').checked = false;
+document.getElementById('stayOnlyGame').onclick = function () {
+    var hide = ['global_header', 'footer', 'salien_section', 'salien_backstory'];
+    var hideThis;
+    for (var i = 0; i < hide.length; i ++)
+    {
+        if(document.getElementById(hide[i])) {
+            hideThis = document.getElementById(hide[i]);
+            if (!this.checked) hideThis.style.display = 'block'; else hideThis.style.display = 'none';
+        } else {
+            hideThis = document.getElementsByClassName(hide[i]);
+            for(var item of hideThis)
+            {
+                if (!this.checked) item.style.display = 'block'; else item.style.display = 'none';
+            }
+        }
+    }
+}
+// Xtreme options end
 
 class BotGUI {
 	constructor(state) {
 		console.log('GUI Has been created');
 
 		this.state = state;
-		
+
 		this.createStatusWindow();
 		this.createProgressBar();
 	}
 
-	createStatusWindow() 
+	createStatusWindow()
 	{
-		if(document.getElementById('salienbot_gui')) 
+		if(document.getElementById('salienbot_gui'))
 		{
 			return false;
 		}
 		var $statusWindow = $J([
-			'<style>#salienbot_gui {padding: 5px 5px 10px 15px; font-size: .85em; width: 250px; position: absolute; height: 2em; overflow-y: hidden;transition: 1s;} div#salienbot_gui:hover {height: auto; background: #222;} p#sab_status{margin-top: -.8em; font-size: .8em;} #salienbot_gui p{margin_top: .2em}</style><div id="salienbot_gui">',
+			'<style>#salienbot_gui {padding: 5px 5px 10px 15px; font-size: .85em; width: 250px; position: absolute; height: 2em; overflow-y: hidden;transition: 1s;} div#salienbot_gui:hover {height: auto; background: linear-gradient(to Bottom, #222 92%, transparent);} p#sab_status{margin-top: -.8em; font-size: .8em;} #salienbot_gui p{margin_top: .2em}</style><div id="salienbot_gui">',
 				'<h2><a href="https://github.com/ensingm2/saliengame_idler">Salien Game Idler</a></h2>',
 				'<p id="sab_status"></p>', // Running or stopped
 				'<p><b>Task: </b><span id="sab_task">Initializing</span></p>', // Current task
@@ -176,17 +229,17 @@ function initGUI(){
 		});
 
 		// Set our onclicks
-		
+
 		$J('#animationsCheckbox').change(function() {
 			INJECT_toggle_animations(!this.checked);
 		});
 		$J('#animationsCheckbox').prop('checked', !animations_enabled);
-		
+
 		$J('#planetSwitchCheckbox').change(function() {
 			auto_switch_planet.active = this.checked;
 		});
 		$J('#planetSwitchCheckbox').prop('checked', auto_switch_planet.active);
-		
+
 
 		// Run the global initializer, which will call the function for whichever screen you're in
 		INJECT_init();
@@ -196,8 +249,8 @@ function initGUI(){
 function calculateTimeToNextLevel() {
 	if (gPlayerInfo.level == 25)
 		return -1;
-	
-	const nextScoreAmount = get_max_score(target_zone);	
+
+	const nextScoreAmount = get_max_score(target_zone);
 	const missingExp = Math.ceil((gPlayerInfo.next_level_score - gPlayerInfo.score) / nextScoreAmount) * nextScoreAmount;
 	const roundTime = resend_frequency + update_length;
 
@@ -318,16 +371,16 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 				// Set target
 				target_zone = zone;
 				current_game_is_boss = window.gGame.m_State.m_Grid.m_Tiles[target_zone].Info.boss;
-				
+
 				// Update the GUI
 				gui.updateStatus(true);
 				gui.updateZone(zone, data.response.zone_info.capture_progress, data.response.zone_info.difficulty, is_boss_battle);
-				
+
 				if($J('#lvlupCheckbox').prop('checked'))
 				{
 					gui.updateEstimatedTime(calculateTimeToNextLevel());
 				}
-		
+
 				current_game_id = data.response.zone_info.gameid;
 				current_game_start = new Date().getTime();
 
@@ -336,7 +389,7 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 					if (!is_boss_battle)
 						CheckSwitchBetterPlanet(true);
 				}
-				
+
 				if(is_boss_battle) {
 					boss_options.error_count = 0;
 					boss_options.report_interval = setInterval(function() { INJECT_report_boss_damage(); }, boss_options.update_freq*1000);
@@ -348,8 +401,8 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 		error: function (xhr, ajaxOptions, thrownError) {
 			var messagesArray = ["start the round", "starting round"];
 			var ajaxParams = {
-				xhr: xhr, 
-				ajaxOptions: ajaxOptions, 
+				xhr: xhr,
+				ajaxOptions: ajaxOptions,
 				thrownError: thrownError
 			};
 			ajaxErrorHandling(this, ajaxParams, messagesArray);
@@ -367,7 +420,7 @@ var INJECT_report_boss_damage = function() {
 				if (player.accountid == account_id) {
 					if (player.time_last_heal !== undefined)
 						boss_options.last_heal = player.time_last_heal;
-					
+
 					if (player.hp > 0) {
 						gui.updateTask("In boss battle. Boss HP left: " + results.response.boss_status.boss_hp + ". EXP earned: " + player.xp_earned + ". HP left: " + player.hp);
 						if (results.response.boss_status.boss_hp == 0 || results.response.game_over) {
@@ -396,7 +449,7 @@ var INJECT_report_boss_damage = function() {
 		boss_options.last_report = undefined;
 		current_game_is_boss = false;
 		INJECT_leave_round();
-		
+
 		if (auto_switch_planet.active == true)
 			CheckSwitchBetterPlanet();
 		else
@@ -432,15 +485,15 @@ var INJECT_wait_for_end = function() {
 	// Wait
 	var wait_time = update_length*1000;
 	var callback;
-	
+
 	// use absolute timestamps to calculate if the game is over, since setTimeout timings are not always reliable
 	if(time_remaining_ms <= 0) {
 		callback = function() { INJECT_end_round(); };
 	}
-	else { 
+	else {
 		callback = function() { INJECT_wait_for_end(); };
 	}
-	
+
 	// Set the timeout
 	clearTimeout(current_timeout);
 	current_timeout = setTimeout(callback, wait_time);
@@ -453,7 +506,7 @@ var INJECT_end_round = function(attempt_no) {
 
 	// Grab the max score we're allowed to send
 	var score = get_max_score();
-	
+
 	// Update gui
 	gui.updateTask("Ending Round");
 
@@ -512,8 +565,8 @@ var INJECT_end_round = function(attempt_no) {
 		error: function (xhr, ajaxOptions, thrownError) {
 			var messagesArray = ["end the round", "ending round"];
 			var ajaxParams = {
-				xhr: xhr, 
-				ajaxOptions: ajaxOptions, 
+				xhr: xhr,
+				ajaxOptions: ajaxOptions,
 				thrownError: thrownError
 			};
 			ajaxErrorHandling(this, ajaxParams, messagesArray);
@@ -543,8 +596,8 @@ var INJECT_leave_round = function() {
 		error: function (xhr, ajaxOptions, thrownError) {
 			var messagesArray = ["leave the round", "leaving round"];
 			var ajaxParams = {
-				xhr: xhr, 
-				ajaxOptions: ajaxOptions, 
+				xhr: xhr,
+				ajaxOptions: ajaxOptions,
 				thrownError: thrownError
 			};
 			ajaxErrorHandling(this, ajaxParams, messagesArray);
@@ -583,7 +636,7 @@ var INJECT_update_grid = function(error_handling) {
 		return;
 	if (error_handling === undefined)
 		error_handling = true;
-	
+
 	// Skip update if a previous successful one happened in the last 8s
 	if (last_update_grid !== undefined) {
 		var last_update_diff = new Date().getTime() - last_update_grid;
@@ -604,10 +657,10 @@ var INJECT_update_grid = function(error_handling) {
 		success: function(data) {
 			window.gGame.m_State.m_PlanetData = data.response.planets[0];
 			window.gGame.m_State.m_PlanetData.zones.forEach( function ( zone ) {
-				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.progress = zone.capture_progress; 
-				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.captured = zone.captured; 
-				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.difficulty = zone.difficulty; 
-				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.boss = zone.boss_active; 
+				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.progress = zone.capture_progress;
+				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.captured = zone.captured;
+				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.difficulty = zone.difficulty;
+				window.gGame.m_State.m_Grid.m_Tiles[zone.zone_position].Info.boss = zone.boss_active;
 			});
 			last_update_grid = new Date().getTime();
 			console.log("Successfully updated map data on planet: " + current_planet_id);
@@ -616,8 +669,8 @@ var INJECT_update_grid = function(error_handling) {
 			if (error_handling == true) {
 				var messagesArray = ["update the grid", "updating the grid"];
 				var ajaxParams = {
-					xhr: xhr, 
-					ajaxOptions: ajaxOptions, 
+					xhr: xhr,
+					ajaxOptions: ajaxOptions,
 					thrownError: thrownError
 				};
 				ajaxErrorHandling(this, ajaxParams, messagesArray);
@@ -653,12 +706,12 @@ function GetBestZone() {
 				//console.log("Zone " + idx + " with boss. Switching to it.");
 				return [idx, zone.boss];
 			}
-			
+
 			if(zone.difficulty >= highestDifficulty && zone.progress > maxProgress) {
 				highestDifficulty = zone.difficulty;
 				maxProgress = zone.progress;
 				bestZone = [idx, zone.boss];
-			} 
+			}
 			else continue;
 		}
 	}
@@ -677,9 +730,9 @@ function GetBestPlanet() {
 	var maxScore = 0;
 	var numberErrors = 0;
 	var bossSpawned = false;
-	
+
 	gui.updateStatus('Getting best planet');
-	
+
 	// GET to the endpoint
 	$J.ajax({
 		async: false,
@@ -697,14 +750,14 @@ function GetBestPlanet() {
 		error: function (xhr, ajaxOptions, thrownError) {
 			var messagesArray = ["get active planets", "getting active planets"];
 			var ajaxParams = {
-				xhr: xhr, 
-				ajaxOptions: ajaxOptions, 
+				xhr: xhr,
+				ajaxOptions: ajaxOptions,
 				thrownError: thrownError
 			};
 			ajaxErrorHandling(this, ajaxParams, messagesArray);
 		}
 	});
-	
+
 	// GET the score of each active planet
 	Object.keys(activePlanetsScore).forEach ( function (planet_id) {
 		// GET to the endpoint
@@ -736,7 +789,7 @@ function GetBestPlanet() {
 		}
 	});
 	console.log(activePlanetsScore);
-	
+
 	// Check if the maximum difficulty available on the best planet is the same as the current one and no boss spawned
 	// If yes, no need to move. Except if max difficulty = 1 and score <= 20, we'll rush it for a new planet
 	if ((current_planet_id in activePlanetsScore) && planetsMaxDifficulty[bestPlanetId] <= auto_switch_planet.current_difficulty && bossSpawned == false) {
@@ -747,13 +800,13 @@ function GetBestPlanet() {
 			return current_planet_id;
 		}
 	}
-	
+
 	// Prevent a planet switch if :
 	// (there were >= 2 errors while fetching planets OR if there's an error while fetching the current planet score)
 	// AND the max difficulty available on best planet found is <= current difficulty
 	if ((numberErrors >= 2 || ((current_planet_id in activePlanetsScore) && activePlanetsScore[current_planet_id] == 0)) && planetsMaxDifficulty[bestPlanetId] <= auto_switch_planet.current_difficulty && bossSpawned == false)
 		return null;
-	
+
 	return bestPlanetId;
 }
 
@@ -800,7 +853,7 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 	var now = new Date().getTime();
 	var lastGameStart = (current_game_start === undefined) ? now : current_game_start;
 	var timeDiff = (now - lastGameStart) / 1000;
-	
+
 	var best_planet = GetBestPlanet();
 
 	if (best_planet !== undefined && best_planet !== null && best_planet != current_planet_id) {
@@ -819,15 +872,15 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 		console.log("There's no planet better than the current one.");
 	}
 	// Hide the game again
-	/*$J('#animationsCheckbox').change(function() {		
+	/*$J('#animationsCheckbox').change(function() {
 		});
 		$J('#animationsCheckbox').prop('checked', !animations_enabled);
 
-	*/
+
 	if($J('#animationsCheckbox').prop('checked'))
 	{
 		INJECT_toggle_animations(!this.checked);
-	}		
+	}*/
 }
 
 var INJECT_switch_planet = function(planet_id, callback) {
@@ -983,7 +1036,7 @@ var INJECT_init_battle_selection = function() {
 	if (check_game_state !== undefined)
 		clearInterval(check_game_state);
 	check_game_state = setInterval(checkUnlockGameState, 60000);
-	
+
 	// Auto join best zone at first
 	if (auto_first_join == true) {
 		firstJoin();
@@ -997,7 +1050,7 @@ var INJECT_init_battle_selection = function() {
 			}
 
 			current_planet_id = window.gGame.m_State.m_PlanetData.id;
-			
+
 			if(access_token === undefined)
 				INJECT_get_access_token();
 
@@ -1071,7 +1124,7 @@ var INJECT_init_planet_selection = function() {
 var INJECT_init = function() {
 	// Set Account ID
 	account_id = gAccountID;
-	
+
 	if (gGame.m_State instanceof CBattleSelectionState)
 		INJECT_init_battle_selection();
 	else if (gGame.m_State instanceof CPlanetSelectionState)
@@ -1101,7 +1154,7 @@ var INJECT_toggle_animations = function(enabled) {
 $J(document).ready(function() {
 	// Auto-grab the access token
 	INJECT_get_access_token();
-	
+
 	// Call our global init function
 	initGUI();
 })
