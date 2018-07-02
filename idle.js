@@ -887,15 +887,9 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 		console.log("There's no planet better than the current one.");
 	}
 	// Hide the game again
-	/*$J('#animationsCheckbox').change(function() {
-		});
-		$J('#animationsCheckbox').prop('checked', !animations_enabled);
-
-
-	if($J('#animationsCheckbox').prop('checked'))
-	{
+	if($J('#animationsCheckbox').prop('checked')) {
 		INJECT_toggle_animations(!this.checked);
-	}*/
+	}
 }
 
 var INJECT_switch_planet = function(planet_id, callback) {
