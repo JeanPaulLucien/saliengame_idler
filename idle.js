@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name		Ensingm2 SGI
+// @name		Ensingm2 Salien Game Idler
 // @namespace	https://github.com/ensingm2/saliengame_idler
-// @version		0.0.20
+// @version		0.0.21
 // @author		ensingm2
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
@@ -18,16 +18,14 @@ var update_length = 1; // How long to wait between updates (In Seconds)
 var loop_rounds = true;
 var language = "english"; // Used when POSTing scores
 var access_token = "";
-var account_id = undefined; // Used to get data back in boss battles
-var current_game_id = undefined;
-var current_game_start = undefined; // Timestamp for when the current game started
+// Used to get data back in boss battles; ; 
+// Timestamp for when the current game started; ; ; 
+// Last time we updated the grid (to avoid too frequent calls)
+// Check the state of the game script and unlock it if needed (setInterval)
+var account_id = current_game_id = current_game_start = current_timeout = current_planet_id = last_update_grid = check_game_state = undefined;  
 var time_passed_ms = 0;
-var current_timeout = undefined;
 var max_retry = 5; // Max number of retries to send requests
 var auto_first_join = true; // Automatically join the best zone at first
-var current_planet_id = undefined;
-var last_update_grid = undefined; // Last time we updated the grid (to avoid too frequent calls)
-var check_game_state = undefined; // Check the state of the game script and unlock it if needed (setInterval)
 var auto_switch_planet = {
 	"active": true, // Automatically switch to the best planet available (true : yes, false : no)
 	"current_difficulty": undefined
@@ -40,12 +38,13 @@ var boss_options = {
 	"report_interval": undefined,
 	"error_count": 0,
 	"last_heal": undefined,
-	"last_report": undefined // Used in the check of the game script state and unlock it if needed
+	"last_report": undefined, // Used in the check of the game script state and unlock it if needed
+    "current_max_hp": undefined,
+    "totally_max_hp": 1000000 // The most fat boss
 }
 var current_game_is_boss = false; // State if we're entering / in a boss battle or not
 
-
-// Xtreme options start
+// Xtreme options
 function funcOnlyGame() {
   var hide = [];
   hide[0] = document.getElementById("global_header");
@@ -95,7 +94,12 @@ document.getElementById('stayOnlyGame').onclick = function () {
         }
     }
 }
-// Xtreme options end
+
+/* var stay_only_game_css = '#header, #footer, .salien_backhistory, .salien_section { display:none;}';
+
+
+
+ */
 
 class BotGUI {
 	constructor(state) {
@@ -433,6 +437,9 @@ var INJECT_report_boss_damage = function() {
 				}
 			});
 			gui.progressbar.SetValue((results.response.boss_status.boss_max_hp - results.response.boss_status.boss_hp) / results.response.boss_status.boss_max_hp);
+            if (boss_options.current_max_hp === undefined)
+				boss_options.current_max_hp = results.response.boss_status.boss_max_hp;
+
 		}
 	}
 	function error(results, eresult) {
@@ -447,6 +454,7 @@ var INJECT_report_boss_damage = function() {
 		boss_options.report_interval = undefined;
 		boss_options.last_heal = undefined;
 		boss_options.last_report = undefined;
+        boss_options.current_max_hp = undefined;
 		current_game_is_boss = false;
 		INJECT_leave_round();
 
@@ -456,7 +464,14 @@ var INJECT_report_boss_damage = function() {
 			SwitchNextZone();
 	}
 
-	var damageDone = Math.floor(Math.random() * 40);
+	var percentHP = 1;
+	if(boss_options.current_max_hp !== undefined) {
+		if(boss_options.current_max_hp > boss_options.totally_max_hp) {
+			boss_options.totally_max_hp = boss_options.current_max_hp;
+		}
+		percentHP = Math.floor(boss_options.current_max_hp / boss_options.totally_max_hp);
+	}
+	var damageDone = Math.floor(Math.random() * 20 * percentHP);
 	var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
 	if (boss_options.last_heal === undefined)
