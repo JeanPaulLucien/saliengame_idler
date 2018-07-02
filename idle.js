@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name		Ensingm2 SGI Latest
+// @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
 // @version		0.0.21
 // @author		ensingm2
@@ -414,9 +414,8 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 	});
 }
 
-var INJECT_report_boss_damage = function() {
-	function success(results) {
-		boss_options.last_report = new Date().getTime();
+var INJECT_report_boss_damage = function() {function success(results) {
+	boss_options.last_report = new Date().getTime();
 		if (results.response.waiting_for_players == true) {
 			gui.updateTask("Waiting for players...");
 		} else {
@@ -886,16 +885,11 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 	} else {
 		console.log("There's no planet better than the current one.");
 	}
-	// Hide the game again
-	/*$J('#animationsCheckbox').change(function() {
-		});
-		$J('#animationsCheckbox').prop('checked', !animations_enabled);
-
-
+	// Hide the game
 	if($J('#animationsCheckbox').prop('checked'))
 	{
 		INJECT_toggle_animations(!this.checked);
-	}*/
+	}
 }
 
 var INJECT_switch_planet = function(planet_id, callback) {
