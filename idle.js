@@ -490,10 +490,9 @@ var INJECT_wait_for_end = function() {
 	// Update GUI
 	gui.updateTask("Waiting " + Math.max(time_remaining, 0) + "s for round to end", false);
 	gui.updateStatus(true);
-	if (target_zone != -1)
-		if($J('#lvlupCheckbox').prop('checked')) {
-			gui.updateEstimatedTime(calculateTimeToNextLevel());
-		}
+	if (target_zone != -1 && $J('#lvlupCheckbox').prop('checked')) {
+		gui.updateEstimatedTime(calculateTimeToNextLevel());
+	}
 	gui.progressbar.SetValue(time_passed_ms/(resend_frequency*1000));
 
 	// Wait
@@ -709,7 +708,7 @@ function get_max_score(zone, round_duration) {
 
 // Get the best zone available
 function GetBestZone() {
-	var bestZone, highestDifficulty = maxProgress = -1;
+	var bestZone, highestDifficulty = -1, maxProgress = -1;
 
 	gui.updateTask('Getting best zone');
 
@@ -730,10 +729,19 @@ function GetBestZone() {
 		}
 	}
 
-	if(bestZone !== undefined) {
-		//console.log(`${window.gGame.m_State.m_PlanetData.state.name} - Zone ${bestZone[0]} Progress: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.progress} Difficulty: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.difficulty}`);
+    if(bestZone === undefined)
+	{
+		console.log("The best zone was not found. Or you freezed at planet selection");
+
 	}
-	return bestZone;
+    else
+    {
+        console.log(bestZone);
+    }
+	/* if(bestZone !== undefined) {
+		//console.log(`${window.gGame.m_State.m_PlanetData.state.name} - Zone ${bestZone[0]} Progress: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.progress} Difficulty: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.difficulty}`);
+	}*/
+    return bestZone
 }
 
 // Get the best planet available
@@ -885,11 +893,12 @@ function CheckSwitchBetterPlanet(difficulty_call) {
 	} else {
 		console.log("There's no planet better than the current one.");
 	}
-	// Hide the game
-	if($J('#animationsCheckbox').prop('checked'))
+	// Hide the game. Bug reason.
+	//$J('#animationsCheckbox').prop('checked', !animations_enabled);
+	/*if($J('#animationsCheckbox').prop('checked'))
 	{
 		INJECT_toggle_animations(!this.checked);
-	}
+	}*/
 }
 
 var INJECT_switch_planet = function(planet_id, callback) {
@@ -989,6 +998,7 @@ var INJECT_leave_planet = function(callback) {
 }
 
 var INJECT_join_planet = function(planet_id, success_callback, error_callback) {
+
 	if(typeof success_callback !== 'function')
 		success_callback = function() {};
 	if(typeof error_callback !== 'function')
@@ -1123,6 +1133,7 @@ var INJECT_init_planet_selection = function() {
 	gServer.JoinPlanet = function(planet_id, success_callback, error_callback) {
 		INJECT_join_planet(planet_id, success_callback, error_callback);
 	}
+    console.log('Joke ' + gServer.JoinPlanet);
 
 	// Update GUI
 	gui.updateStatus(false);
@@ -1136,8 +1147,12 @@ var INJECT_init = function() {
 
 	if (gGame.m_State instanceof CBattleSelectionState)
 		INJECT_init_battle_selection();
-	else if (gGame.m_State instanceof CPlanetSelectionState)
-		INJECT_init_planet_selection();
+	else if (gGame.m_State instanceof CPlanetSelectionState) {
+        var funcResult = INJECT_init_planet_selection();
+        if( funcResult === undefined) {
+            CheckSwitchBetterPlanet();
+        }
+	}
 };
 
 var INJECT_toggle_animations = function(enabled) {
