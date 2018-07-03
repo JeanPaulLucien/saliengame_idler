@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
-// @version		0.0.21
-// @author		ensingm2
+// @version		0.0.22
+// @author		ensingm2 + JeanPaulLucien mods
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
 // @grant		none
@@ -382,9 +382,7 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 				// Update the GUI
 				gui.updateStatus(true);
 				gui.updateZone(zone, data.response.zone_info.capture_progress, data.response.zone_info.difficulty, is_boss_battle);
-
-				//if($J('#lvlupCheckbox').prop('checked'))
-					gui.updateEstimatedTime(calculateTimeToNextLevel());
+                gui.updateEstimatedTime(calculateTimeToNextLevel());
 
 				current_game_id = data.response.zone_info.gameid;
 				current_game_start = new Date().getTime();
@@ -492,7 +490,7 @@ var INJECT_wait_for_end = function() {
 	// Update GUI
 	gui.updateTask("Waiting " + Math.max(time_remaining, 0) + "s for round to end", false);
 	gui.updateStatus(true);
-	if (target_zone != -1) //&& $J('#lvlupCheckbox').prop('checked')) {
+	if (target_zone != -1)
 		gui.updateEstimatedTime(calculateTimeToNextLevel());
 
 	gui.progressbar.SetValue(time_passed_ms/(resend_frequency*1000));
@@ -565,9 +563,7 @@ var INJECT_end_round = function(attempt_no) {
 				} else {
 					gui.updateExp(data.response.new_score + " / " + data.response.next_level_score);
 				}
-				//if($J('#lvlupCheckbox').prop('checked'))
-					gui.updateEstimatedTime(calculateTimeToNextLevel());
-
+				gui.updateEstimatedTime(calculateTimeToNextLevel()); 
 				gui.updateZone("None");
 
 				// Restart the round if we have that variable set
