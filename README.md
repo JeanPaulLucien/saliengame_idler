@@ -33,7 +33,7 @@ Hey everyone, Like all of you, I was interested in "streamlining" the process of
 2. Bring up the JavaScript Console
    * Windows: F12 or CTRL+Shift+J
    * Mac: Command+Option+J
-3. Copy the JavaScript code from [idle.js](https://raw.githubusercontent.com/ensingm2/saliengame_idler/master/idle.js), paste it into the console and press enter
+3. Copy the JavaScript code from [idle.js](https://github.com/JeanPaulLucien/saliengame_idler/blob/master/idle.js), paste it into the console and press enter
    * Output can be seen and tracked in the console, and a "Salien Game Idler" GUI should be displayed on-screen.
 
 Note: The script may also be set up on userscript managers such as Tampermonkey, however we advise against enabling automatic updates for _*any*_ scripts, for your own security, and have disabled automatic updates by default.
