@@ -161,10 +161,14 @@ class BotGUI {
 	}
 
 	updateEstimatedTime(secondsLeft) {
-		if (secondsLeft == -1) {
-			document.getElementById('sab_lvlup').innerText = "Max level reached";
+		if (secondsLeft == 0) {
+			document.getElementById('sab_lvlup').innerText = "Max level";
 			return;
 		}
+        if(secondsLeft == null) {
+            document.getElementById('sab_lvlup').innerText = "Disabled";
+            return;
+        }
 		let date = new Date(null);
 		date.setSeconds(secondsLeft);
 		var result = date.toISOString().substr(8, 11).split(/[T:]/);
@@ -174,6 +178,7 @@ class BotGUI {
 		var minutes = result[2];
 		var seconds = result[3];
 
+        // Here is no seconds
 		var timeTxt = "";
 		if(days > 0)
 			timeTxt += days + "d ";
@@ -181,9 +186,7 @@ class BotGUI {
 			timeTxt += hours + "h ";
 		if(minutes > 0 || timeTxt.length > 0)
 			timeTxt += minutes + "m ";
-
-		timeTxt += seconds + "s";
-
+		//timeTxt += seconds + "s";
 		document.getElementById('sab_lvlup').innerText = timeTxt;
 	}
 
@@ -251,15 +254,15 @@ function initGUI(){
 };
 
 function calculateTimeToNextLevel() {
-	if (gPlayerInfo.level == 25)
-		return -1;
+	if(gPlayerInfo.level == 25)
+		return 0;
+    if(!$J('#lvlupCheckbox').prop('checked'))
+        return null;
 
 	const nextScoreAmount = get_max_score(target_zone);
-	const missingExp = Math.ceil((gPlayerInfo.next_level_score - gPlayerInfo.score) / nextScoreAmount) * nextScoreAmount;
 	const roundTime = resend_frequency + update_length;
-
-	const secondsLeft = missingExp / nextScoreAmount * roundTime - time_passed_ms / 1000;
-
+	const secondsLeft = Math.ceil((gPlayerInfo.next_level_score - gPlayerInfo.score) / nextScoreAmount) * roundTime - Math.ceil(time_passed_ms / 1000); // * 120
+	// окр. вверх до целого(float(int(значение опыта для след. уровня - сколько сейчас опыта) / опыта с зоны)) * 120 секунд
 	return secondsLeft;
 }
 
@@ -380,10 +383,8 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 				gui.updateStatus(true);
 				gui.updateZone(zone, data.response.zone_info.capture_progress, data.response.zone_info.difficulty, is_boss_battle);
 
-				if($J('#lvlupCheckbox').prop('checked'))
-				{
+				//if($J('#lvlupCheckbox').prop('checked'))
 					gui.updateEstimatedTime(calculateTimeToNextLevel());
-				}
 
 				current_game_id = data.response.zone_info.gameid;
 				current_game_start = new Date().getTime();
@@ -471,6 +472,7 @@ var INJECT_report_boss_damage = function() {function success(results) {
 		percentHP = Math.floor(boss_options.current_max_hp / boss_options.totally_max_hp);
 	}
 	var damageDone = Math.floor(Math.random() * 20 * percentHP);
+    console.log('Your damage: ' + damageDone);
 	var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
 	if (boss_options.last_heal === undefined)
@@ -490,9 +492,9 @@ var INJECT_wait_for_end = function() {
 	// Update GUI
 	gui.updateTask("Waiting " + Math.max(time_remaining, 0) + "s for round to end", false);
 	gui.updateStatus(true);
-	if (target_zone != -1 && $J('#lvlupCheckbox').prop('checked')) {
+	if (target_zone != -1) //&& $J('#lvlupCheckbox').prop('checked')) {
 		gui.updateEstimatedTime(calculateTimeToNextLevel());
-	}
+
 	gui.progressbar.SetValue(time_passed_ms/(resend_frequency*1000));
 
 	// Wait
@@ -563,9 +565,9 @@ var INJECT_end_round = function(attempt_no) {
 				} else {
 					gui.updateExp(data.response.new_score + " / " + data.response.next_level_score);
 				}
-				if($J('#lvlupCheckbox').prop('checked')) {
+				//if($J('#lvlupCheckbox').prop('checked'))
 					gui.updateEstimatedTime(calculateTimeToNextLevel());
-				}
+
 				gui.updateZone("None");
 
 				// Restart the round if we have that variable set
