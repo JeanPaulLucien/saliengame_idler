@@ -2,7 +2,7 @@
 // @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
 // @version		0.0.22
-// @author		ensingm2 + JeanPaulLucien mods
+// @author		ensingm2
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
 // @grant		none
@@ -124,7 +124,7 @@ class BotGUI {
 				'<p><b>Task: </b><span id="sab_task">Initializing</span></p>', // Current task
 				`<p><b>Target Zone: </b><span id="sab_zone">None</span></p>`,
 				`<p style="display:none" id="sab_zone_difficulty_div"><b>Zone Difficulty:</b> <span id="sab_zone_difficulty"></span> <span id="sab_zone_score"></span></p>`, // why? It's not visible
-				'<p><b>Level: </b><span id="sab_level">'+ this.state.level +'</span><b>    EXP: </b><span id="sab_exp">'+ this.state.exp +" / "+ this.state.next_level_exp +'</span></p>',
+				'<p><b>Level: </b><span id="sab_level">'+ this.state.level +'</span><b> EXP: </b><span id="sab_exp">'+ this.state.exp +" / "+ this.state.next_level_exp +'</span></p>',
 				'<p><b>Lvl Up In: </b><input id="lvlupCheckbox" type="checkbox"><span id="sab_lvlup"></span></p>',
 				'<p><input id="planetSwitchCheckbox" type="checkbox">Automatic Planet Switching</p>',
 				'<p><input id="animationsCheckbox" type="checkbox">Hide Game (Improves Performance)</p>',
@@ -303,6 +303,7 @@ function checkUnlockGameState() {
 
 // Grab the user's access token
 var INJECT_get_access_token = function() {
+    console.log('Try to get access token');
 	$J.ajax({
 		async: false,
 		type: "GET",
@@ -413,7 +414,7 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 	});
 }
 
-var INJECT_report_boss_damage = function() {function success(results) {
+var INJECT_report_boss_damage = function() { function success(results) {
 	boss_options.last_report = new Date().getTime();
 		if (results.response.waiting_for_players == true) {
 			gui.updateTask("Waiting for players...");
@@ -563,7 +564,7 @@ var INJECT_end_round = function(attempt_no) {
 				} else {
 					gui.updateExp(data.response.new_score + " / " + data.response.next_level_score);
 				}
-				gui.updateEstimatedTime(calculateTimeToNextLevel()); 
+				gui.updateEstimatedTime(calculateTimeToNextLevel());
 				gui.updateZone("None");
 
 				// Restart the round if we have that variable set
@@ -727,15 +728,11 @@ function GetBestZone() {
 		}
 	}
 
-    if(bestZone === undefined)
-	{
-		console.log("The best zone was not found. Or you freezed at planet selection");
-
-	}
+    if(bestZone === undefined) ?
+		console.log("Best zone wasn't found. Or you freezed at planet selection");
     else
-    {
-        console.log(bestZone);
-    }
+        console.log("Best zone is " + bestZone);
+
 	/* if(bestZone !== undefined) {
 		//console.log(`${window.gGame.m_State.m_PlanetData.state.name} - Zone ${bestZone[0]} Progress: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.progress} Difficulty: ${window.gGame.m_State.m_Grid.m_Tiles[bestZone[0]].Info.difficulty}`);
 	}*/
@@ -945,8 +942,9 @@ var INJECT_switch_planet = function(planet_id, callback) {
 				wait_for_state_load();
 			},
 			function ( response ) {
-				ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
+                ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
 			});
+        //console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
 	}
 }
 
@@ -1147,9 +1145,8 @@ var INJECT_init = function() {
 		INJECT_init_battle_selection();
 	else if (gGame.m_State instanceof CPlanetSelectionState) {
         var funcResult = INJECT_init_planet_selection();
-        if( funcResult === undefined) {
+        if (funcResult === undefined)
             CheckSwitchBetterPlanet();
-        }
 	}
 };
 
