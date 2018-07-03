@@ -2,7 +2,7 @@
 // @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
 // @version		0.0.22
-// @author		ensingm2
+// @author		ensingm2 + JeanPaulLucien mods
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
 // @grant		none
@@ -728,7 +728,7 @@ function GetBestZone() {
 		}
 	}
 
-    if(bestZone === undefined) ?
+    if(bestZone === undefined)
 		console.log("Best zone wasn't found. Or you freezed at planet selection");
     else
         console.log("Best zone is " + bestZone);
@@ -942,9 +942,9 @@ var INJECT_switch_planet = function(planet_id, callback) {
 				wait_for_state_load();
 			},
 			function ( response ) {
-                ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
+                console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
 			});
-        //console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
+        //ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
 	}
 }
 
