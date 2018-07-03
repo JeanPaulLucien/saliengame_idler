@@ -41,7 +41,7 @@ var boss_options = {
 	"last_report": undefined, // Used in the check of the game script state and unlock it if needed
     "current_max_hp": undefined,
     "totally_max_hp": 100000000 // The most fat boss
-	"previous_hp: //
+	"previous_hp": //
 }
 var current_game_is_boss = false; // State if we're entering / in a boss battle or not
 
