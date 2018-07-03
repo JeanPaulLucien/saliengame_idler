@@ -408,8 +408,9 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 	});
 }
 
-var INJECT_report_boss_damage = function() { function success(results) {
-	boss_options.last_report = new Date().getTime();
+var INJECT_report_boss_damage = function() {
+	function success(results) {
+		boss_options.last_report = new Date().getTime();
 		if (results.response.waiting_for_players == true) {
 			gui.updateTask("Waiting for players...");
 		} else {
@@ -427,12 +428,12 @@ var INJECT_report_boss_damage = function() { function success(results) {
 						gui.updateTask("You died, ending boss fight. Boss HP left: " + results.response.boss_status.boss_hp + ". EXP earned: " + player.xp_earned);
 						end_game();
 					}
+					boss_options.totally_max_hp = results.response.boss_status.boss_hp;
 				}
 			});
 			gui.progressbar.SetValue((results.response.boss_status.boss_max_hp - results.response.boss_status.boss_hp) / results.response.boss_status.boss_max_hp);
             if (boss_options.current_max_hp === undefined)
 				boss_options.current_max_hp = results.response.boss_status.boss_max_hp;
-
 		}
 	}
 	function error(results, eresult) {
@@ -458,10 +459,11 @@ var INJECT_report_boss_damage = function() { function success(results) {
 	}
 
 	// Up-to-date damage method
-	if(!Number.isInteger(boss_options.previous_hp))
-		boss_options.previous_hp = results.response.boss_status.boss_hp;
+    //boss_options.totally_max_hp = 0
+	if(boss_options.previous_hp === undefinded)
+		boss_options.previous_hp = boss_options.totally_max_hp;
 
-	var delta_boss_hp = boss_options.previous_hp - results.response.boss_status.boss_hp + 10000;
+	var delta_boss_hp = boss_options.previous_hp - boss_options.totally_max_hp + 10000;
 	var damageDone = Math.ceil(Math.atan(10000/delta_boss_hp + 0.02) * 1000 / (1 / (26 - gPlayerInfo.level) + 0.46));
 	// = 1/(26,8-J24)+0,46 =1/(26-J24)+0,46 = Math.atan(gPlayerInfo.level - 0.57 * gPlayerInfo.level
 
@@ -473,9 +475,10 @@ var INJECT_report_boss_damage = function() { function success(results) {
 		percentHP = Math.floor(boss_options.current_max_hp / boss_options.totally_max_hp); results.response.boss_status.boss_hp
 	}
 	var damageDone = Math.floor(Math.random(1,25) * percentHP / gPlayerInfo.level); */
-
-    console.log('Your damage: ' + damageDone + ' With next options. PercentHP: ' + percentHP + ' Curmaxhp: ' + boss_options.current_max_hp + ' Maxhpever: ' + boss_options.totally_max_hp);
-    var damageTaken = 0;
+    console.log('Your damage: ' + damageDone + ' With next options. Previous HP: ' + boss_options.previous_hp + ' PercentHP: deleted Curmaxhp: ' + boss_options.current_max_hp + ' Maxhpever: ' + boss_options.totally_max_hp);
+    boss_options.previous_hp = boss_options.totally_max_hp; 
+	
+	var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
 	if (boss_options.last_heal === undefined)
 		boss_options.last_heal = now - Math.floor(Math.random() * 40);
