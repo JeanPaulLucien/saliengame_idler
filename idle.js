@@ -462,18 +462,18 @@ var INJECT_report_boss_damage = function() { function success(results) {
 		boss_options.previous_hp = results.response.boss_status.boss_hp;
 
 	var delta_boss_hp = boss_options.previous_hp - results.response.boss_status.boss_hp + 10000;
-	var damageDone = Math.ceil(Math.atan(10000/delta_boss_hp + 0.02) * 1000 / (1 / (26 - gPlayerInfo.level) + 0.46);
+	var damageDone = Math.ceil(Math.atan(10000/delta_boss_hp + 0.02) * 1000 / (1 / (26 - gPlayerInfo.level) + 0.46));
 	// = 1/(26,8-J24)+0,46 =1/(26-J24)+0,46 = Math.atan(gPlayerInfo.level - 0.57 * gPlayerInfo.level
-	
+
 	/* Old damage method
 	var percentHP = 1;
 	if(boss_options.current_max_hp !== undefined) {
-		if(boss_options.current_max_hp > boss_options.totally_max_hp) 
+		if(boss_options.current_max_hp > boss_options.totally_max_hp)
 			boss_options.totally_max_hp = boss_options.current_max_hp;
 		percentHP = Math.floor(boss_options.current_max_hp / boss_options.totally_max_hp); results.response.boss_status.boss_hp
 	}
 	var damageDone = Math.floor(Math.random(1,25) * percentHP / gPlayerInfo.level); */
-							   
+
     console.log('Your damage: ' + damageDone + ' With next options. PercentHP: ' + percentHP + ' Curmaxhp: ' + boss_options.current_max_hp + ' Maxhpever: ' + boss_options.totally_max_hp);
     var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
