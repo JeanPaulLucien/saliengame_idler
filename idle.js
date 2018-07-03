@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name		Ensingm2 SGI
 // @namespace	https://github.com/ensingm2/saliengame_idler
-// @version		0.0.22
+// @version		0.0.23.1
 // @author		ensingm2 + JeanPaulLucien mods
 // @match		*://steamcommunity.com/saliengame/play
 // @match		*://steamcommunity.com/saliengame/play/
@@ -40,7 +40,7 @@ var boss_options = {
 	"last_heal": undefined,
 	"last_report": undefined, // Used in the check of the game script state and unlock it if needed
     "current_max_hp": undefined,
-    "totally_max_hp": 1000000 // The most fat boss
+    "totally_max_hp": 100000000 // The most fat boss
 }
 var current_game_is_boss = false; // State if we're entering / in a boss battle or not
 
@@ -72,8 +72,6 @@ var xtremeStyle = document.createElement('style');
     xtremeStyle.innerHTML = ".sab_xtremeOptions {margin: 0 auto;text-align: center;padding: 10px 0;}";
     xtremeDiv.appendChild(xtremeStyle, xtremeDiv);
 
-
-
 document.body.insertBefore(xtremeDiv, document.body.firstChild);
 
 document.getElementById('stayOnlyGame').checked = false;
@@ -94,12 +92,7 @@ document.getElementById('stayOnlyGame').onclick = function () {
         }
     }
 }
-
-/* var stay_only_game_css = '#header, #footer, .salien_backhistory, .salien_section { display:none;}';
-
-
-
- */
+// var stay_only_game_css = '#header, #footer, .salien_backhistory, .salien_section { display:none;}';
 
 class BotGUI {
 	constructor(state) {
@@ -467,12 +460,13 @@ var INJECT_report_boss_damage = function() { function success(results) {
 	if(boss_options.current_max_hp !== undefined) {
 		if(boss_options.current_max_hp > boss_options.totally_max_hp) {
 			boss_options.totally_max_hp = boss_options.current_max_hp;
+            console.log('%c New MAX HP ever!', 'color: orange;');
 		}
 		percentHP = Math.floor(boss_options.current_max_hp / boss_options.totally_max_hp);
 	}
 	var damageDone = Math.floor(Math.random() * 20 * percentHP);
-    console.log('Your damage: ' + damageDone);
-	var damageTaken = 0;
+    console.log('Your damage: ' + damageDone + ' With next options. PercentHP: ' + percentHP + ' Curmaxhp: ' + boss_options.current_max_hp + ' Maxhpever: ' + boss_options.totally_max_hp);
+    var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
 	if (boss_options.last_heal === undefined)
 		boss_options.last_heal = now - Math.floor(Math.random() * 40);
