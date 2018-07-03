@@ -414,7 +414,7 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 	});
 }
 
-var INJECT_report_boss_damage = function() {function success(results) {
+var INJECT_report_boss_damage = function() { function success(results) {
 	boss_options.last_report = new Date().getTime();
 		if (results.response.waiting_for_players == true) {
 			gui.updateTask("Waiting for players...");
@@ -941,10 +941,10 @@ var INJECT_switch_planet = function(planet_id, callback) {
 				gGame.ChangeState( new CBattleSelectionState( planet_id ) );
 				wait_for_state_load();
 			},
-			function(response) {
-                //console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
+			function ( response ) {
                 ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
 			});
+        //console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
 	}
 }
 
@@ -1145,9 +1145,8 @@ var INJECT_init = function() {
 		INJECT_init_battle_selection();
 	else if (gGame.m_State instanceof CPlanetSelectionState) {
         var funcResult = INJECT_init_planet_selection();
-        if( funcResult === undefined) {
+        if (funcResult === undefined)
             CheckSwitchBetterPlanet();
-        }
 	}
 };
 
