@@ -47,3 +47,6 @@ Note: The script may also be set up on userscript managers such as Tampermonkey,
 
 ### Want to Contribute?
 Feel free. You can submit whatever changes you'd like. Fork, PR, whatever. Go nuts.
+
+### Screenshot
+https://github.com/JeanPaulLucien/saliengame_idler/blob/master/game-screen.jpg
