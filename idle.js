@@ -39,8 +39,8 @@ var boss_options = {
 	"error_count": 0,
 	"last_heal": undefined,
 	"last_report": undefined, // Used in the check of the game script state and unlock it if needed
-	"current_max_hp": undefined,
-	"totally_max_hp": 100000000, // The most fat boss
+    "current_max_hp": undefined,
+    "totally_max_hp": 100000000, // The most fat boss
 	"previous_hp": undefined //
 }
 var current_game_is_boss = false; // State if we're entering / in a boss battle or not
@@ -408,9 +408,8 @@ var INJECT_start_round = function(zone, access_token, attempt_no, is_boss_battle
 	});
 }
 
-var INJECT_report_boss_damage = function() {
-	function success(results) {
-		boss_options.last_report = new Date().getTime();
+var INJECT_report_boss_damage = function() { function success(results) {
+	boss_options.last_report = new Date().getTime();
 		if (results.response.waiting_for_players == true) {
 			gui.updateTask("Waiting for players...");
 		} else {
@@ -428,12 +427,13 @@ var INJECT_report_boss_damage = function() {
 						gui.updateTask("You died, ending boss fight. Boss HP left: " + results.response.boss_status.boss_hp + ". EXP earned: " + player.xp_earned);
 						end_game();
 					}
-					boss_options.totally_max_hp = results.response.boss_status.boss_hp;
+                    boss_options.totally_max_hp = results.response.boss_status.boss_hp;
 				}
 			});
 			gui.progressbar.SetValue((results.response.boss_status.boss_max_hp - results.response.boss_status.boss_hp) / results.response.boss_status.boss_max_hp);
             if (boss_options.current_max_hp === undefined)
 				boss_options.current_max_hp = results.response.boss_status.boss_max_hp;
+
 		}
 	}
 	function error(results, eresult) {
@@ -460,7 +460,7 @@ var INJECT_report_boss_damage = function() {
 
 	// Up-to-date damage method
     //boss_options.totally_max_hp = 0
-	if(boss_options.previous_hp === undefinded)
+	if(boss_options.previous_hp === undefined)
 		boss_options.previous_hp = boss_options.totally_max_hp;
 
 	var delta_boss_hp = boss_options.previous_hp - boss_options.totally_max_hp + 10000;
@@ -476,9 +476,9 @@ var INJECT_report_boss_damage = function() {
 	}
 	var damageDone = Math.floor(Math.random(1,25) * percentHP / gPlayerInfo.level); */
     console.log('Your damage: ' + damageDone + ' With next options. Previous HP: ' + boss_options.previous_hp + ' PercentHP: deleted Curmaxhp: ' + boss_options.current_max_hp + ' Maxhpever: ' + boss_options.totally_max_hp);
-    boss_options.previous_hp = boss_options.totally_max_hp; 
-	
-	var damageTaken = 0;
+    boss_options.previous_hp = boss_options.totally_max_hp;
+
+    var damageTaken = 0;
 	var now = (new Date().getTime()) / 1000;
 	if (boss_options.last_heal === undefined)
 		boss_options.last_heal = now - Math.floor(Math.random() * 40);
@@ -948,7 +948,8 @@ var INJECT_switch_planet = function(planet_id, callback) {
 				wait_for_state_load();
 			},
 			function ( response ) {
-                console.log('%c Join Planet Error', '%c Failed to join planet. Please reload your game or try again shortly.', 'color: red;', 'color: blue;' );
+                console.log('Join Planet Error: Failed to join planet. Please reload your game or try again shortly.');
+                location.reload();
 			});
         //ShowAlertDialog( 'Join Planet Error', 'Failed to join planet. Please reload your game or try again shortly.' );
 	}
