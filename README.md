@@ -1,3 +1,5 @@
+##Tampermonkey strongly recommend!
+
 # Salien Game Idler
 
 [Link to Saliens Game](https://steamcommunity.com/saliengame/play)
