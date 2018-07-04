@@ -26,7 +26,8 @@ This fork includes all actual features from original which is nice in my opinion
 * Status GUI to update level, experience, time remaining in round, etc
 
 ### Screenshot
-(https://github.com/JeanPaulLucien/saliengame_idler/blob/master/game-screen.jpg)
+
+![defauld_screen](https://github.com/JeanPaulLucien/saliengame_idler/blob/master/game-screen.jpg)
 
 ### How to Run
 **Currently tested on Chrome/Chromium, Firefox and Safari. Internet Explorer and Edge both encounter errors. The following guide is for Chrome:**
