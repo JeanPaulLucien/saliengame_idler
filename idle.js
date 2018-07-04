@@ -93,22 +93,18 @@ document.getElementById('stayOnlyGame').onclick = function () {
         }
     }
 }
+document.getElementById('stayOnlyGame').click();
 // var stay_only_game_css = '#header, #footer, .salien_backhistory, .salien_section { display:none;}';
 
 class BotGUI {
 	constructor(state) {
 		console.log('GUI Has been created');
-
 		this.state = state;
-
 		this.createStatusWindow();
 		this.createProgressBar();
 	}
-
-	createStatusWindow()
-	{
-		if(document.getElementById('salienbot_gui'))
-		{
+	createStatusWindow() {
+		if(document.getElementById('salienbot_gui')) {
 			return false;
 		}
 		var $statusWindow = $J([
