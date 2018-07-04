@@ -1,8 +1,10 @@
-##Tampermonkey strongly recommend!
+
 
 # Salien Game Idler
 
 [Link to Saliens Game](https://steamcommunity.com/saliengame/play)
+
+##Tampermonkey strongly recommend!
 
 This fork includes all actual features from original which is nice in my opinion. 
 
